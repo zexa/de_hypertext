@@ -1,4 +1,4 @@
-use de_hypertext_core::Deserializer;
+use de_hypertext::Deserializer;
 use std::error::Error;
 
 #[allow(unused)]

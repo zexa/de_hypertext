@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
-use de_hypertext_core::DeserializeError;
-use de_hypertext_core::Deserializer;
+use de_hypertext::DeserializeError;
+use de_hypertext::Deserializer;
 use std::error::Error;
 
 #[derive(Debug)]

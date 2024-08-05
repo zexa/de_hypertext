@@ -88,7 +88,7 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
                                             document
                                                 .select(&selector)
                                                 .into_iter()
-                                                .map(|document| BookItem::from_document(&document))
+                                                .map(|document| #inner_type::from_document(&document))
                                                 .collect::<Result<Vec<#inner_type>, _>>()?
                                         };
                                     }
@@ -102,7 +102,7 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
                             Some(attribute) => quote! {
                                 .value()
                                 .attr(#attribute)
-                                .ok_or(de_hypertext_core::DeserializeError::AttributeNotFound {
+                                .ok_or(de_hypertext::DeserializeError::AttributeNotFound {
                                     struct_name: std::any::type_name::<#struct_name>().to_string(),
                                     field: #field_name_lit.to_string(),
                                     selector: #selector.to_string(),
@@ -125,7 +125,7 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
                                 document
                                     .select(&selector)
                                     .next()
-                                    .ok_or(de_hypertext_core::DeserializeError::ElementNotFoud {
+                                    .ok_or(de_hypertext::DeserializeError::ElementNotFoud {
                                         struct_name: std::any::type_name::<#struct_name>().to_string(),
                                         field: #field_name_lit.to_string(),
                                         selector: #selector.to_string(),
@@ -135,9 +135,12 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
                         }
                     }
 
-                    let field_path = type_path;
-
-                    panic!("unhandled field {:?}. Identifier: {:?}", field_name_lit, field_path)
+                    quote! {
+                        let #field_name = {
+                            let selector = scraper::Selector::parse(#selector)?;
+                            #type_path::from_document(&selector)
+                        };
+                    }
                 },
                 _ => panic!("unsupported type"),
             }
@@ -145,7 +148,7 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
         .collect::<TokenStream>();
 
     quote!(
-        impl de_hypertext_core::Deserializer<Self> for #struct_name {
+        impl de_hypertext::Deserializer<Self> for #struct_name {
             fn from_document(document: &scraper::ElementRef) -> Result<Self, Box<dyn std::error::Error>> {
                 #field_impls
                 Ok(Self { #field_idents })

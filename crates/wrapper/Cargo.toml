@@ -6,3 +6,10 @@ edition = "2021"
 [dependencies]
 de_hypertext_core.workspace = true
 de_hypertext_macro.workspace = true
+
+[dev-dependencies]
+scraper.workspace = true
+tokio.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
