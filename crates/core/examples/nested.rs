@@ -26,7 +26,7 @@ impl Deserializer<Self> for BooksPage {
                 .select(&selector)
                 .next()
                 .ok_or(DeserializeError::ElementNotFoud {
-                    struct_name: "BookPage".to_string(),
+                    struct_name: std::any::type_name::<Self>().to_string(),
                     field: "title".to_string(),
                     selector: "title".to_string(),
                 })?
@@ -35,7 +35,14 @@ impl Deserializer<Self> for BooksPage {
                 .trim()
                 .to_string()
         };
-        let items = BookItem::from_document(document)?;
+        let items = {
+            let selector = scraper::Selector::parse(".row > li")?;
+            document
+                .select(&selector)
+                .into_iter()
+                .map(|document| BookItem::from_document(&document))
+                .collect::<Result<Vec<BookItem>, _>>()?
+        };
         Ok(BooksPage { title, items })
     }
 }
@@ -52,21 +59,21 @@ impl Deserializer<Vec<Self>> for BookItem {
 }
 
 impl Deserializer<Self> for BookItem {
-    fn from_document(document: &scraper::ElementRef) -> Result<BookItem, Box<dyn Error>> {
+    fn from_document(document: &scraper::ElementRef) -> Result<Self, Box<dyn Error>> {
         let url = {
             let selector = scraper::Selector::parse("h3 > a")?;
             document
                 .select(&selector)
                 .next()
                 .ok_or(DeserializeError::ElementNotFoud {
-                    struct_name: "BookItem".to_string(),
+                    struct_name: std::any::type_name::<Self>().to_string(),
                     field: "name".to_string(),
                     selector: "h3 > a".to_string(),
                 })?
                 .value()
                 .attr("href")
                 .ok_or(DeserializeError::AttributeNotFound {
-                    struct_name: "BookItem".to_string(),
+                    struct_name: std::any::type_name::<Self>().to_string(),
                     field: "url".to_string(),
                     selector: "h3 > a".to_string(),
                     attribute: "href".to_string(),
@@ -79,7 +86,7 @@ impl Deserializer<Self> for BookItem {
                 .select(&selector)
                 .next()
                 .ok_or(DeserializeError::ElementNotFoud {
-                    struct_name: "BookItem".to_string(),
+                    struct_name: std::any::type_name::<Self>().to_string(),
                     field: "name".to_string(),
                     selector: "h3 > a".to_string(),
                 })?
@@ -92,7 +99,7 @@ impl Deserializer<Self> for BookItem {
                 .select(&selector)
                 .next()
                 .ok_or(DeserializeError::ElementNotFoud {
-                    struct_name: "BookItem".to_string(),
+                    struct_name: std::any::type_name::<Self>().to_string(),
                     field: "price".to_string(),
                     selector: ".price_color".to_string(),
                 })?
@@ -105,14 +112,14 @@ impl Deserializer<Self> for BookItem {
                 .select(&selector)
                 .next()
                 .ok_or(DeserializeError::ElementNotFoud {
-                    struct_name: "BookItem".to_string(),
+                    struct_name: std::any::type_name::<Self>().to_string(),
                     field: "stars".to_string(),
                     selector: ".star-rating".to_string(),
                 })?
                 .value()
                 .attr("class")
                 .ok_or(DeserializeError::AttributeNotFound {
-                    struct_name: "BookItem".to_string(),
+                    struct_name: std::any::type_name::<Self>().to_string(),
                     field: "stars".to_string(),
                     selector: ".star-rating".to_string(),
                     attribute: "class".to_string(),
