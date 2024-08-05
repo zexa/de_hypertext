@@ -43,7 +43,6 @@ pub trait Deserializer<T> {
 
 #[derive(Debug)]
 pub enum DeserializeError {
-    MissingDocument,
     ElementNotFoud {
         struct_name: String,
         field: String,
