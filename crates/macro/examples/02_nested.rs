@@ -3,7 +3,6 @@
 use de_hypertext_core::Deserializer;
 use std::error::Error;
 
-#[allow(unused)]
 #[derive(Debug, de_hypertext_macro::Deserialize)]
 struct BooksPage {
     #[de_hypertext(selector = "title", trim)]
