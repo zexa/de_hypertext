@@ -138,7 +138,15 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
                     quote! {
                         let #field_name = {
                             let selector = scraper::Selector::parse(#selector)?;
-                            #type_path::from_document(&selector)
+                            let document = document
+                                .select(&selector)
+                                .next()
+                                .ok_or(de_hypertext::DeserializeError::ElementNotFoud {
+                                    struct_name: std::any::type_name::<#struct_name>().to_string(),
+                                    field: #field_name_lit.to_string(),
+                                    selector: #selector.to_string(),
+                                })?;
+                            #type_path::from_document(&document)?
                         };
                     }
                 },
