@@ -1,0 +1,8 @@
+[package]
+name = "de_hypertext"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+de_hypertext_core.workspace = true
+de_hypertext_macro.workspace = true
