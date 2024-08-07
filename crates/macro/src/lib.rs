@@ -95,6 +95,25 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
                                 }
                             }
                         }
+
+                        if segment.ident.to_string() == "Option" {
+                            if let syn::PathArguments::AngleBracketed(ref args) = segment.arguments {
+                                if let Some(syn::GenericArgument::Type(inner_type)) = args.args.first() {
+                                    return quote! {
+                                        let #field_name = {
+                                            let selector = scraper::Selector::parse(#selector)?;
+                                            match document.select(&selector).next() {
+                                                Some(document) => match #inner_type::from_document(&document) {
+                                                    Ok(#field_name) => Some(#field_name),
+                                                    Err(_) => None
+                                                },
+                                                None => None,
+                                            }
+                                        };
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     if type_path.path.is_ident("String") {

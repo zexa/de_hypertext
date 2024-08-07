@@ -47,17 +47,6 @@ impl Deserializer<Self> for BooksPage {
     }
 }
 
-impl Deserializer<Vec<Self>> for BookItem {
-    fn from_document(document: &scraper::ElementRef) -> Result<Vec<BookItem>, Box<dyn Error>> {
-        let selector = scraper::Selector::parse(".row > li")?;
-        document
-            .select(&selector)
-            .into_iter()
-            .map(|document| BookItem::from_document(&document))
-            .collect()
-    }
-}
-
 impl Deserializer<Self> for BookItem {
     fn from_document(document: &scraper::ElementRef) -> Result<Self, Box<dyn Error>> {
         let url = {
