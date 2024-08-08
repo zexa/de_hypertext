@@ -19,9 +19,15 @@ struct BookItem {
 }
 
 impl Deserializer<Self> for BooksPage {
-    fn from_document(document: &scraper::ElementRef) -> Result<Self, Box<dyn Error>> {
+    fn from_document(document: &scraper::ElementRef) -> Result<Self, DeserializeError> {
         let title = {
-            let selector = scraper::Selector::parse("title")?;
+            let selector = scraper::Selector::parse("title").map_err(|_| {
+                DeserializeError::BuildingSelectorFailed {
+                    struct_name: std::any::type_name::<Self>().to_string(),
+                    field: "title".to_string(),
+                    selector: "title".to_string(),
+                }
+            })?;
             document
                 .select(&selector)
                 .next()
@@ -36,7 +42,13 @@ impl Deserializer<Self> for BooksPage {
                 .to_string()
         };
         let items = {
-            let selector = scraper::Selector::parse(".row > li")?;
+            let selector = scraper::Selector::parse("riw > li").map_err(|_| {
+                DeserializeError::BuildingSelectorFailed {
+                    struct_name: std::any::type_name::<Self>().to_string(),
+                    field: "items".to_string(),
+                    selector: "row > li".to_string(),
+                }
+            })?;
             document
                 .select(&selector)
                 .into_iter()
@@ -48,9 +60,15 @@ impl Deserializer<Self> for BooksPage {
 }
 
 impl Deserializer<Self> for BookItem {
-    fn from_document(document: &scraper::ElementRef) -> Result<Self, Box<dyn Error>> {
+    fn from_document(document: &scraper::ElementRef) -> Result<Self, DeserializeError> {
         let url = {
-            let selector = scraper::Selector::parse("h3 > a")?;
+            let selector = scraper::Selector::parse("h3 > a").map_err(|_| {
+                DeserializeError::BuildingSelectorFailed {
+                    struct_name: std::any::type_name::<Self>().to_string(),
+                    field: "url".to_string(),
+                    selector: "h3 > a".to_string(),
+                }
+            })?;
             document
                 .select(&selector)
                 .next()
@@ -70,7 +88,13 @@ impl Deserializer<Self> for BookItem {
                 .to_string()
         };
         let name = {
-            let selector = scraper::Selector::parse("h3 > a")?;
+            let selector = scraper::Selector::parse("h3 > a").map_err(|_| {
+                DeserializeError::BuildingSelectorFailed {
+                    struct_name: std::any::type_name::<Self>().to_string(),
+                    field: "name".to_string(),
+                    selector: "h3 > a".to_string(),
+                }
+            })?;
             document
                 .select(&selector)
                 .next()
@@ -83,7 +107,13 @@ impl Deserializer<Self> for BookItem {
                 .collect()
         };
         let price = {
-            let selector = scraper::Selector::parse(".price_color")?;
+            let selector = scraper::Selector::parse(".price_color").map_err(|_| {
+                DeserializeError::BuildingSelectorFailed {
+                    struct_name: std::any::type_name::<Self>().to_string(),
+                    field: "price".to_string(),
+                    selector: ".price_color".to_string(),
+                }
+            })?;
             document
                 .select(&selector)
                 .next()
@@ -96,7 +126,13 @@ impl Deserializer<Self> for BookItem {
                 .collect()
         };
         let stars = {
-            let selector = scraper::Selector::parse(".star-rating")?;
+            let selector = scraper::Selector::parse(".star-rating").map_err(|_| {
+                DeserializeError::BuildingSelectorFailed {
+                    struct_name: std::any::type_name::<Self>().to_string(),
+                    field: "stars".to_string(),
+                    selector: ".star-rating".to_string(),
+                }
+            })?;
             document
                 .select(&selector)
                 .next()

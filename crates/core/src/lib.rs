@@ -3,9 +3,9 @@ use scraper::ElementRef;
 use std::error::Error;
 
 pub trait Deserializer<T> {
-    fn from_document(document: &ElementRef) -> Result<T, Box<dyn Error>>;
+    fn from_document(document: &ElementRef) -> Result<T, DeserializeError>;
 
-    fn from_html(html: &str) -> Result<T, Box<dyn Error>> {
+    fn from_html(html: &str) -> Result<T, DeserializeError> {
         let html = scraper::Html::parse_document(html);
         let document = html.root_element();
         Self::from_document(&document)
@@ -14,6 +14,11 @@ pub trait Deserializer<T> {
 
 #[derive(Debug)]
 pub enum DeserializeError {
+    BuildingSelectorFailed {
+        struct_name: String,
+        field: String,
+        selector: String,
+    },
     ElementNotFoud {
         struct_name: String,
         field: String,

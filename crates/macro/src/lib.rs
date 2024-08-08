@@ -75,6 +75,16 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
             };
 
             let selector = selector.expect("missing #[de_hypertext(selector)]");
+            let selector_impl = quote! {
+                let selector = de_hypertext::scraper::Selector::parse(#selector).map_err(|_| {
+                    de_hypertext::DeserializeError::BuildingSelectorFailed {
+                        struct_name: std::any::type_name::<Self>().to_string(),
+                        field: #field_name_lit.to_string(),
+                        selector: #selector.to_string(),
+                    }
+                })?;
+
+            };
 
             match &field.ty {
                 syn::Type::Path(type_path) => {
@@ -84,7 +94,7 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
                                 if let Some(syn::GenericArgument::Type(inner_type)) = args.args.first() {
                                     return quote! {
                                         let #field_name = {
-                                            let selector = scraper::Selector::parse(#selector)?;
+                                            #selector_impl
                                             document
                                                 .select(&selector)
                                                 .into_iter()
@@ -101,7 +111,7 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
                                 if let Some(syn::GenericArgument::Type(inner_type)) = args.args.first() {
                                     return quote! {
                                         let #field_name = {
-                                            let selector = scraper::Selector::parse(#selector)?;
+                                            #selector_impl
                                             match document.select(&selector).next() {
                                                 Some(document) => match #inner_type::from_document(&document) {
                                                     Ok(#field_name) => Some(#field_name),
@@ -140,7 +150,7 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
 
                         return quote! {
                             let #field_name = {
-                                let selector = scraper::Selector::parse(#selector)?;
+                                #selector_impl
                                 document
                                     .select(&selector)
                                     .next()
@@ -156,7 +166,7 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
 
                     quote! {
                         let #field_name = {
-                            let selector = scraper::Selector::parse(#selector)?;
+                            #selector_impl
                             let document = document
                                 .select(&selector)
                                 .next()
@@ -176,7 +186,7 @@ pub fn derive_deserialize(input: proc_macro::TokenStream) -> proc_macro::TokenSt
 
     quote!(
         impl de_hypertext::Deserializer<Self> for #struct_name {
-            fn from_document(document: &scraper::ElementRef) -> Result<Self, Box<dyn std::error::Error>> {
+            fn from_document(document: &de_hypertext::scraper::ElementRef) -> Result<Self, de_hypertext::DeserializeError> {
                 #field_impls
                 Ok(Self { #field_idents })
             }
