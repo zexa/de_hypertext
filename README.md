@@ -12,13 +12,26 @@ de_hypertext = "0.1"
 use de_hypertext::Deserializer;
 use std::error::Error;
 
-#[allow(unused)]
 #[derive(Debug, de_hypertext_macro::Deserialize)]
 struct BooksPage {
     #[de_hypertext(selector = "title", trim)]
     title: String,
     #[de_hypertext(selector = ".pager > .current", trim)]
     pages: String,
+    #[de_hypertext(selector = ".row > li")]
+    items: Vec<BookItem>,
+}
+
+#[derive(Debug, de_hypertext_macro::Deserialize)]
+struct BookItem {
+    #[de_hypertext(selector = "h3 > a", attribute = "href")]
+    url: String,
+    #[de_hypertext(selector = "h3 > a")]
+    name: String,
+    #[de_hypertext(selector = ".price_color")]
+    price: String,
+    #[de_hypertext(selector = ".star-rating", attribute = "class")]
+    stars: String,
 }
 
 #[tokio::main]
