@@ -2,6 +2,8 @@
 name = "de_hypertext_macro"
 version = "0.1.0"
 edition = "2021"
+description = "derive macro for de_hypertext"
+license-file = "../../LICENSE"
 
 [lib]
 proc-macro = true

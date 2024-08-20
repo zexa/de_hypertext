@@ -4,7 +4,7 @@ Framework for parsing html into Rust structures.
 ## Usage
 ```toml
 [dependencies]
-de_hypertext = "0.1"
+de_hypertext.git = "https://github.com/zexa/de_hypertext.git"
 ```
 
 ## Example

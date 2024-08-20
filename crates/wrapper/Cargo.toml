@@ -2,6 +2,8 @@
 name = "de_hypertext"
 version = "0.1.0"
 edition = "2021"
+description = "serde_json ergonomics for parsing html"
+license-file = "../../LICENSE"
 
 [dependencies]
 de_hypertext_core.workspace = true
