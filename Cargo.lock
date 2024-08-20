@@ -142,8 +142,8 @@ dependencies = [
 name = "de_hypertext"
 version = "0.1.0"
 dependencies = [
- "de_hypertext_core",
- "de_hypertext_macro",
+ "de_hypertext_core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "de_hypertext_macro 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "reqwest",
  "scraper",
  "serde",
@@ -159,10 +159,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "de_hypertext_core"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "68c542d058bfbcbb59fd96e3eb4a5d96c6e1673f6e26b0ac79160ecca513a765"
+dependencies = [
+ "scraper",
+]
+
+[[package]]
 name = "de_hypertext_macro"
 version = "0.1.0"
 dependencies = [
- "de_hypertext_core",
+ "de_hypertext_core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "proc-macro2",
+ "quote",
+ "scraper",
+ "syn 2.0.72",
+]
+
+[[package]]
+name = "de_hypertext_macro"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "742c33429ba060d73d0c18fc6ef0be24c5158c9c175487bca96838453b5b35ad"
+dependencies = [
+ "de_hypertext_core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "proc-macro2",
  "quote",
  "scraper",
