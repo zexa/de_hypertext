@@ -7,3 +7,10 @@ license-file = "../../LICENSE"
 
 [dependencies]
 scraper.workspace = true
+syn.workspace = true
+quote.workspace = true
+proc-macro2.workspace = true
+
+[dev-dependencies]
+pretty_assertions.workspace = true
+prettyplease.workspace = true

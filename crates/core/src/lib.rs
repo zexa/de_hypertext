@@ -2,6 +2,8 @@ use core::fmt::Display;
 use scraper::ElementRef;
 use std::error::Error;
 
+pub mod derive;
+
 pub trait Deserializer<T> {
     fn from_document(document: &ElementRef) -> Result<T, DeserializeError>;
 
