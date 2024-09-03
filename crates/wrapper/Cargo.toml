@@ -1,6 +1,6 @@
 [package]
 name = "de_hypertext"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "serde_json ergonomics for parsing html"
 license-file = "../../LICENSE"
