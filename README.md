@@ -2,7 +2,7 @@
 Framework for parsing html into Rust structures.
 
 ## Usage
-```toml
+```bash
 cargo add de_hypertext
 ```
 
