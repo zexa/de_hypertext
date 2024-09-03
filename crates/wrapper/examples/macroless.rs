@@ -82,7 +82,7 @@ impl Deserializer<Self> for BookItem {
                 .ok_or(DeserializeError::AttributeNotFound {
                     struct_name: std::any::type_name::<Self>().to_string(),
                     field: "url".to_string(),
-                    selector: "h3 > a".to_string(),
+                    selector: Some("h3 > a".to_string()),
                     attribute: "href".to_string(),
                 })?
                 .to_string()
@@ -146,7 +146,7 @@ impl Deserializer<Self> for BookItem {
                 .ok_or(DeserializeError::AttributeNotFound {
                     struct_name: std::any::type_name::<Self>().to_string(),
                     field: "stars".to_string(),
-                    selector: ".star-rating".to_string(),
+                    selector: Some(".star-rating".to_string()),
                     attribute: "class".to_string(),
                 })?
                 .to_string()

@@ -6,6 +6,7 @@ license-file = "../../LICENSE"
 
 [dependencies]
 de_hypertext_core.workspace = true
+de_hypertext.workspace = true
 syn.workspace = true
 pretty_assertions.workspace = true
 prettyplease.workspace = true

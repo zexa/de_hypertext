@@ -178,6 +178,7 @@ dependencies = [
 name = "de_hypertext_tests"
 version = "0.0.0"
 dependencies = [
+ "de_hypertext",
  "de_hypertext_core",
  "pretty_assertions",
  "prettyplease",

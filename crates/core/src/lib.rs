@@ -8,7 +8,7 @@ pub trait Deserializer<T> {
     fn from_document(document: &ElementRef) -> Result<T, DeserializeError>;
 
     fn from_html(html: &str) -> Result<T, DeserializeError> {
-        let html = scraper::Html::parse_document(html);
+        let html = scraper::Html::parse_fragment(html);
         let document = html.root_element();
         Self::from_document(&document)
     }
@@ -29,7 +29,7 @@ pub enum DeserializeError {
     AttributeNotFound {
         struct_name: String,
         field: String,
-        selector: String,
+        selector: Option<String>,
         attribute: String,
     },
 }
