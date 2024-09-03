@@ -3,6 +3,16 @@ use quote::quote;
 use quote::ToTokens;
 use syn::DeriveInput;
 use syn::LitStr;
+use syn::PathSegment;
+
+fn get_inner_type(segment: &PathSegment) -> Option<&syn::Type> {
+    if let syn::PathArguments::AngleBracketed(ref args) = segment.arguments {
+        if let Some(syn::GenericArgument::Type(inner_type)) = args.args.first() {
+            return Some(inner_type);
+        }
+    }
+    None
+}
 
 pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
     let struct_name = input.ident;
@@ -65,9 +75,7 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                 .unwrap();
 
             let trim = match trim {
-                true => quote! {
-                    .trim()
-                },
+                true => quote! {.trim()},
                 false => quote! {},
             };
 
@@ -87,74 +95,60 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                 syn::Type::Path(type_path) => {
                     if let Some(segment) = type_path.path.segments.first() {
                         if segment.ident.to_string() == "Vec" {
-                            if let syn::PathArguments::AngleBracketed(ref args) = segment.arguments {
-                                if let Some(syn::GenericArgument::Type(inner_type)) = args.args.first() {
-                                    return quote! {
-                                        let #field_name = {
-                                            #selector_impl
-                                            document
-                                                .select(&selector)
-                                                .into_iter()
-                                                .map(|document| #inner_type::from_document(&document))
-                                                .collect::<Result<Vec<#inner_type>, _>>()?
-                                        };
-                                    }
+                            if let Some(inner_type) = get_inner_type(segment) {
+                                return quote! {
+                                    let #field_name = {
+                                        #selector_impl
+                                        document
+                                            .select(&selector)
+                                            .into_iter()
+                                            .map(|document| #inner_type::from_document(&document))
+                                            .collect::<Result<Vec<#inner_type>, _>>()?
+                                    };
                                 }
                             }
                         }
 
                         if segment.ident.to_string() == "Option" {
-                            if let syn::PathArguments::AngleBracketed(ref args) = segment.arguments {
-                                if let Some(syn::GenericArgument::Type(inner_type)) = args.args.first() {
-                                    return match inner_type.to_token_stream().to_string().as_str() {
-                                        "String" => {
-                                            match attribute {
-                                                Some(attribute) => quote! {
-                                                    let #field_name = {
-                                                        #selector_impl
-                                                        match document.select(&selector).next() {
-                                                            Some(document) => document
-                                                                .value()
-                                                                .attr(#attribute)
-                                                                .map(|attribute|
-                                                                    attribute
-                                                                        .trim()
-                                                                        .to_string()
-                                                                ),
-                                                            None => None,
-                                                        }
-                                                    };
-                                                },
-                                                None => quote! {
-                                                    let #field_name = {
-                                                        #selector_impl
-                                                        document
-                                                            .select(&selector)
-                                                            .next()
-                                                            .map(|document|
-                                                                document
-                                                                    .text()
-                                                                    .collect::<String>()
-                                                                    #trim
-                                                                    .to_string()
-                                                            )
-                                                    };
-                                                }
+                            if let Some(inner_type) = get_inner_type(segment) {
+                                return match inner_type.to_token_stream().to_string().as_str() {
+                                    "String" => {
+                                        match attribute {
+                                            Some(attribute) => quote! {
+                                                let #field_name = {
+                                                    #selector_impl
+                                                    match document.select(&selector).next() {
+                                                        Some(document) => document
+                                                            .value()
+                                                            .attr(#attribute)
+                                                            .map(|attribute| attribute.trim().to_string()),
+                                                        None => None,
+                                                    }
+                                                };
+                                            },
+                                            None => quote! {
+                                                let #field_name = {
+                                                    #selector_impl
+                                                    document
+                                                        .select(&selector)
+                                                        .next()
+                                                        .map(|document|document.text().collect::<String>()#trim.to_string())
+                                                };
                                             }
-                                        },
-                                        _ => quote! {
-                                            let #field_name = {
-                                                #selector_impl
-                                                match document.select(&selector).next() {
-                                                    Some(document) => match #inner_type::from_document(&document) {
-                                                        Ok(#field_name) => Some(#field_name),
-                                                        Err(_) => None
-                                                    },
-                                                    None => None,
-                                                }
-                                            };
-                                        },
-                                    }
+                                        }
+                                    },
+                                    _ => quote! {
+                                        let #field_name = {
+                                            #selector_impl
+                                            match document.select(&selector).next() {
+                                                Some(document) => match #inner_type::from_document(&document) {
+                                                    Ok(#field_name) => Some(#field_name),
+                                                    Err(_) => None
+                                                },
+                                                None => None,
+                                            }
+                                        };
+                                    },
                                 }
                             }
                         }
