@@ -3,10 +3,10 @@ members = ["crates/*"]
 resolver = "2"
 
 [workspace.dependencies]
-#de_hypertext_core = "0.1.0"
-de_hypertext_core = { path = "./crates/core" }
-#de_hypertext_macro = "0.1.0"
-de_hypertext_macro = { path = "./crates/macro" }
+de_hypertext_core = "0.1.0"
+#de_hypertext_core = { path = "./crates/core" }
+de_hypertext_macro = "0.1.0"
+#de_hypertext_macro = { path = "./crates/macro" }
 de_hypertext = { path = "./crates/wrapper" }
 
 proc-macro2 = "1.0.86"
