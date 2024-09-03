@@ -175,6 +175,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "de_hypertext_tests"
+version = "0.0.0"
+dependencies = [
+ "de_hypertext_core",
+ "pretty_assertions",
+ "prettyplease",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.77",
+]
+
+[[package]]
 name = "derive_more"
 version = "0.99.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"

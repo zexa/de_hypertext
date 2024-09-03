@@ -1,0 +1,13 @@
+[package]
+name = "de_hypertext_tests"
+edition = "2021"
+description = "tests for de_hypertext"
+license-file = "../../LICENSE"
+
+[dependencies]
+de_hypertext_core.workspace = true
+syn.workspace = true
+pretty_assertions.workspace = true
+prettyplease.workspace = true
+proc-macro2.workspace = true
+quote.workspace = true
