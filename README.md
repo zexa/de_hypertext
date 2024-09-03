@@ -3,8 +3,7 @@ Framework for parsing html into Rust structures.
 
 ## Usage
 ```toml
-[dependencies]
-de_hypertext.git = "0.1.0"
+cargo add de_hypertext
 ```
 
 ## Example
