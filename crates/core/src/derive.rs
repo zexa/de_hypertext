@@ -56,7 +56,7 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                         }
 
                         Err(meta.error(format!(
-                            "unrecognized de_hypertext attribute {:?}",
+                            "unrecognized de_hypertext attribute '{}'",
                             meta.path.clone().into_token_stream().to_string()
                         )))
                     })
@@ -116,11 +116,11 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                                                             Some(document) => document
                                                                 .value()
                                                                 .attr(#attribute)
-                                                                .map(|attribute| {
+                                                                .map(|attribute|
                                                                     attribute
                                                                         .trim()
                                                                         .to_string()
-                                                                }),
+                                                                ),
                                                             None => None,
                                                         }
                                                     };
@@ -131,13 +131,13 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                                                         document
                                                             .select(&selector)
                                                             .next()
-                                                            .map(|document| {
+                                                            .map(|document|
                                                                 document
                                                                     .text()
                                                                     .collect::<String>()
                                                                     #trim
                                                                     .to_string()
-                                                            })
+                                                            )
                                                     };
                                                 }
                                             }
