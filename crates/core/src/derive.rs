@@ -113,8 +113,15 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                                 return quote! {
                                     let #field_name = {
                                         document
-                                            #select_impl
-                                            .into_iter()
+                                            .select(
+                                                &de_hypertext::scraper::Selector::parse(#selector).map_err(|_| {
+                                                    de_hypertext::DeserializeError::BuildingSelectorFailed {
+                                                        struct_name: std::any::type_name::<Self>().to_string(),
+                                                        field: #field_name_lit.to_string(),
+                                                        selector: #selector.to_string(),
+                                                    }
+                                                })?
+                                            )
                                             .map(|document| #inner_type::from_document(&document))
                                             .collect::<Result<Vec<#inner_type>, _>>()?
                                     };
