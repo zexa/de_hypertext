@@ -10,7 +10,7 @@ fn test_vec_t() {
     #[derive(Debug)]
     struct T {}
 
-    impl de_hypertext::Deserializer<T> for T {
+    impl de_hypertext::Deserializer for T {
         fn from_document(
             document: &de_hypertext::scraper::ElementRef,
         ) -> Result<Self, de_hypertext::DeserializeError> {
@@ -23,7 +23,7 @@ fn test_vec_t() {
         field1: Vec<T>,
     }
 
-    impl de_hypertext::Deserializer<Self> for VecT {
+    impl de_hypertext::Deserializer for VecT {
         fn from_document(
             document: &de_hypertext::scraper::ElementRef,
         ) -> Result<Self, de_hypertext::DeserializeError> {
@@ -72,7 +72,7 @@ fn test_vec_t_impl() {
     let actual = impl_derive_deserialize(input);
 
     let expected: TokenStream = parse_quote! {
-        impl de_hypertext::Deserializer<Self> for VecT {
+        impl de_hypertext::Deserializer for VecT {
             fn from_document(
                 document: &de_hypertext::scraper::ElementRef,
             ) -> Result<Self, de_hypertext::DeserializeError> {

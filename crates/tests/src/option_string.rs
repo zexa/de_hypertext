@@ -12,7 +12,7 @@ fn test_option_string_impl() {
         }
     };
     let expected: TokenStream = parse_quote! {
-        impl de_hypertext::Deserializer<Self> for OptionStringSelector {
+        impl de_hypertext::Deserializer for OptionStringSelector {
             fn from_document(
                 document: &de_hypertext::scraper::ElementRef,
             ) -> Result<Self, de_hypertext::DeserializeError> {
@@ -54,7 +54,7 @@ fn test_option_string_attribute_impl() {
         }
     };
     let expected: TokenStream = quote! {
-        impl de_hypertext::Deserializer<Self> for OptionStringSelectorAttribute {
+        impl de_hypertext::Deserializer for OptionStringSelectorAttribute {
             fn from_document(
                 document: &de_hypertext::scraper::ElementRef,
             ) -> Result<Self, de_hypertext::DeserializeError> {
@@ -99,7 +99,7 @@ fn test_option_string_no_selector_attribute_impl() {
         }
     };
     let expected: TokenStream = quote! {
-        impl de_hypertext::Deserializer<Self> for OptionStringSelectorAttribute {
+        impl de_hypertext::Deserializer for OptionStringSelectorAttribute {
             fn from_document(
                 document: &de_hypertext::scraper::ElementRef,
             ) -> Result<Self, de_hypertext::DeserializeError> {

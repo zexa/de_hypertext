@@ -4,10 +4,10 @@ use std::error::Error;
 
 pub mod derive;
 
-pub trait Deserializer<T> {
-    fn from_document(document: &ElementRef) -> Result<T, DeserializeError>;
+pub trait Deserializer: Sized {
+    fn from_document(document: &ElementRef) -> Result<Self, DeserializeError>;
 
-    fn from_html(html: &str) -> Result<T, DeserializeError> {
+    fn from_html(html: &str) -> Result<Self, DeserializeError> {
         let html = scraper::Html::parse_fragment(html);
         let document = html.root_element();
         Self::from_document(&document)

@@ -11,7 +11,7 @@ fn test_no_selector() {
         field1: String,
     }
 
-    impl de_hypertext::Deserializer<Self> for NoSelector {
+    impl de_hypertext::Deserializer for NoSelector {
         fn from_document(
             document: &de_hypertext::scraper::ElementRef,
         ) -> Result<Self, de_hypertext::DeserializeError> {
@@ -32,7 +32,7 @@ fn test_no_selector_impl() {
         }
     };
     let expected: TokenStream = parse_quote! {
-        impl de_hypertext::Deserializer<Self> for NoSelector {
+        impl de_hypertext::Deserializer for NoSelector {
             fn from_document(
                 document: &de_hypertext::scraper::ElementRef,
             ) -> Result<Self, de_hypertext::DeserializeError> {
@@ -52,7 +52,7 @@ fn test_no_selector_impl() {
 //         field1: String,
 //     }
 
-//     impl de_hypertext::Deserializer<Self> for NoSelectorButWithAttribute {
+//     impl de_hypertext::Deserializer for NoSelectorButWithAttribute {
 //         fn from_document(
 //             document: &de_hypertext::scraper::ElementRef,
 //         ) -> Result<Self, de_hypertext::DeserializeError> {
@@ -84,7 +84,7 @@ fn test_no_selector_but_with_attribute_impl() {
         }
     };
     let expected: TokenStream = parse_quote! {
-        impl de_hypertext::Deserializer<Self> for NoSelectorButWithAttribute {
+        impl de_hypertext::Deserializer for NoSelectorButWithAttribute {
             fn from_document(
                 document: &de_hypertext::scraper::ElementRef,
             ) -> Result<Self, de_hypertext::DeserializeError> {

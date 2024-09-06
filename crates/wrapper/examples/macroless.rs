@@ -18,7 +18,7 @@ struct BookItem {
     stars: String,
 }
 
-impl Deserializer<Self> for BooksPage {
+impl Deserializer for BooksPage {
     fn from_document(document: &scraper::ElementRef) -> Result<Self, DeserializeError> {
         let title = {
             let selector = scraper::Selector::parse("title").map_err(|_| {
@@ -59,7 +59,7 @@ impl Deserializer<Self> for BooksPage {
     }
 }
 
-impl Deserializer<Self> for BookItem {
+impl Deserializer for BookItem {
     fn from_document(document: &scraper::ElementRef) -> Result<Self, DeserializeError> {
         let url = {
             let selector = scraper::Selector::parse("h3 > a").map_err(|_| {

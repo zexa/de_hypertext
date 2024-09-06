@@ -238,7 +238,7 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
         .collect::<TokenStream>();
 
     quote!(
-        impl de_hypertext::Deserializer<Self> for #struct_name {
+        impl de_hypertext::Deserializer for #struct_name {
             fn from_document(document: &de_hypertext::scraper::ElementRef) -> Result<Self, de_hypertext::DeserializeError> {
                 #field_impls
                 Ok(Self { #field_idents })
