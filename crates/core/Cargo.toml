@@ -1,6 +1,6 @@
 [package]
 name = "de_hypertext_core"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "core of how de_hypertext works"
 license-file = "../../LICENSE"
@@ -10,7 +10,3 @@ scraper.workspace = true
 syn.workspace = true
 quote.workspace = true
 proc-macro2.workspace = true
-
-[dev-dependencies]
-pretty_assertions.workspace = true
-prettyplease.workspace = true

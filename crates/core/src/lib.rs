@@ -2,6 +2,8 @@ use core::fmt::Display;
 use scraper::ElementRef;
 use std::error::Error;
 
+pub use scraper;
+
 pub mod derive;
 
 pub trait Deserializer: Sized {

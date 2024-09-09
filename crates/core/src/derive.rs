@@ -1,7 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use quote::ToTokens;
-use syn::parse_quote;
 use syn::DeriveInput;
 use syn::ExprClosure;
 use syn::LitStr;

@@ -19,9 +19,11 @@ struct BookItem {
 }
 
 impl Deserializer for BooksPage {
-    fn from_document(document: &scraper::ElementRef) -> Result<Self, DeserializeError> {
+    fn from_document(
+        document: &de_hypertext::scraper::ElementRef,
+    ) -> Result<Self, DeserializeError> {
         let title = {
-            let selector = scraper::Selector::parse("title").map_err(|_| {
+            let selector = de_hypertext::scraper::Selector::parse("title").map_err(|_| {
                 DeserializeError::BuildingSelectorFailed {
                     struct_name: std::any::type_name::<Self>().to_string(),
                     field: "title".to_string(),
@@ -42,7 +44,7 @@ impl Deserializer for BooksPage {
                 .to_string()
         };
         let items = {
-            let selector = scraper::Selector::parse("riw > li").map_err(|_| {
+            let selector = de_hypertext::scraper::Selector::parse("riw > li").map_err(|_| {
                 DeserializeError::BuildingSelectorFailed {
                     struct_name: std::any::type_name::<Self>().to_string(),
                     field: "items".to_string(),
@@ -60,9 +62,11 @@ impl Deserializer for BooksPage {
 }
 
 impl Deserializer for BookItem {
-    fn from_document(document: &scraper::ElementRef) -> Result<Self, DeserializeError> {
+    fn from_document(
+        document: &de_hypertext::scraper::ElementRef,
+    ) -> Result<Self, DeserializeError> {
         let url = {
-            let selector = scraper::Selector::parse("h3 > a").map_err(|_| {
+            let selector = de_hypertext::scraper::Selector::parse("h3 > a").map_err(|_| {
                 DeserializeError::BuildingSelectorFailed {
                     struct_name: std::any::type_name::<Self>().to_string(),
                     field: "url".to_string(),
@@ -88,7 +92,7 @@ impl Deserializer for BookItem {
                 .to_string()
         };
         let name = {
-            let selector = scraper::Selector::parse("h3 > a").map_err(|_| {
+            let selector = de_hypertext::scraper::Selector::parse("h3 > a").map_err(|_| {
                 DeserializeError::BuildingSelectorFailed {
                     struct_name: std::any::type_name::<Self>().to_string(),
                     field: "name".to_string(),
@@ -107,13 +111,14 @@ impl Deserializer for BookItem {
                 .collect()
         };
         let price = {
-            let selector = scraper::Selector::parse(".price_color").map_err(|_| {
-                DeserializeError::BuildingSelectorFailed {
-                    struct_name: std::any::type_name::<Self>().to_string(),
-                    field: "price".to_string(),
-                    selector: ".price_color".to_string(),
-                }
-            })?;
+            let selector =
+                de_hypertext::scraper::Selector::parse(".price_color").map_err(|_| {
+                    DeserializeError::BuildingSelectorFailed {
+                        struct_name: std::any::type_name::<Self>().to_string(),
+                        field: "price".to_string(),
+                        selector: ".price_color".to_string(),
+                    }
+                })?;
             document
                 .select(&selector)
                 .next()
@@ -126,13 +131,14 @@ impl Deserializer for BookItem {
                 .collect()
         };
         let stars = {
-            let selector = scraper::Selector::parse(".star-rating").map_err(|_| {
-                DeserializeError::BuildingSelectorFailed {
-                    struct_name: std::any::type_name::<Self>().to_string(),
-                    field: "stars".to_string(),
-                    selector: ".star-rating".to_string(),
-                }
-            })?;
+            let selector =
+                de_hypertext::scraper::Selector::parse(".star-rating").map_err(|_| {
+                    DeserializeError::BuildingSelectorFailed {
+                        struct_name: std::any::type_name::<Self>().to_string(),
+                        field: "stars".to_string(),
+                        selector: ".star-rating".to_string(),
+                    }
+                })?;
             document
                 .select(&selector)
                 .next()

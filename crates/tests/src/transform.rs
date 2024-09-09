@@ -5,6 +5,7 @@ use syn::{parse_quote, DeriveInput};
 
 #[test]
 fn test_transform() {
+    #[allow(dead_code)]
     struct Transforming {
         field1: String,
     }

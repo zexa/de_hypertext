@@ -1,10 +1,10 @@
 use de_hypertext_core::derive::impl_derive_deserialize;
 use proc_macro2::TokenStream;
-use quote::quote;
 use syn::{parse_quote, DeriveInput};
 
 #[test]
 fn test_vec_t() {
+    #[allow(dead_code)]
     use de_hypertext::Deserializer;
 
     #[derive(Debug)]
@@ -12,7 +12,7 @@ fn test_vec_t() {
 
     impl de_hypertext::Deserializer for T {
         fn from_document(
-            document: &de_hypertext::scraper::ElementRef,
+            _document: &de_hypertext::scraper::ElementRef,
         ) -> Result<Self, de_hypertext::DeserializeError> {
             Ok(T {})
         }

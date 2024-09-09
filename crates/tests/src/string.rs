@@ -1,9 +1,9 @@
-use de_hypertext::{DeserializeError, Deserializer};
+use de_hypertext::Deserializer;
 use de_hypertext_core::derive::impl_derive_deserialize;
 use proc_macro2::TokenStream;
 use syn::{parse_quote, DeriveInput};
 
-use crate::{assert_tokens_eq, assert_tokens_ugly_eq};
+use crate::assert_tokens_eq;
 
 #[test]
 fn test_no_selector() {

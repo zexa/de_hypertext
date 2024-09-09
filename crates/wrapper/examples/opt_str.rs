@@ -1,3 +1,4 @@
+#[allow(dead_code)]
 #[derive(de_hypertext::Deserialize)]
 struct HasOption {
     #[de_hypertext(selector = "h3")]

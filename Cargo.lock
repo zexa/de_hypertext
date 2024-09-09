@@ -145,7 +145,6 @@ dependencies = [
  "de_hypertext_core",
  "de_hypertext_macro",
  "reqwest",
- "scraper",
  "serde",
  "serde_json",
  "tokio",
@@ -153,10 +152,8 @@ dependencies = [
 
 [[package]]
 name = "de_hypertext_core"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
- "pretty_assertions",
- "prettyplease",
  "proc-macro2",
  "quote",
  "scraper",
