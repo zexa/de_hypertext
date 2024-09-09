@@ -3,6 +3,8 @@ mod option_string;
 #[cfg(test)]
 mod string;
 #[cfg(test)]
+mod transform;
+#[cfg(test)]
 mod vec;
 
 use pretty_assertions::assert_eq;

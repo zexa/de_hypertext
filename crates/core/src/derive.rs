@@ -1,7 +1,9 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 use quote::ToTokens;
+use syn::parse_quote;
 use syn::DeriveInput;
+use syn::ExprClosure;
 use syn::LitStr;
 use syn::PathSegment;
 
@@ -43,6 +45,9 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
             let mut attribute: Option<LitStr> = None;
             // de_hypertext(trim)
             let mut trim = false;
+            // de_hypertext(transform)
+            let mut transform: Option<ExprClosure> = None;
+
             // parsing all attributes inside de_hypertext
             field
                 .attrs
@@ -65,6 +70,11 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                             return Ok(());
                         }
 
+                        if meta.path.is_ident("transform") {
+                            transform = Some(meta.value()?.parse()?);
+                            return Ok(());
+                        }
+
                         Err(meta.error(format!(
                             "unrecognized de_hypertext attribute '{}'",
                             meta.path.clone().into_token_stream().to_string()
@@ -74,9 +84,12 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                 .collect::<Result<Vec<_>, _>>()
                 .unwrap();
 
-            let trim = match trim {
-                true => quote! {.trim()},
-                false => quote! {},
+            let transform = match transform {
+                Some(transform) => quote! {
+                    let transform = #transform;
+                    let value = transform(value);
+                },
+                None => quote! {},
             };
 
             let (selector_opt, select_impl) = match &selector {
@@ -155,18 +168,24 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
 
                                                 quote! {
                                                     let #field_name = {
-                                                        document
+                                                        let value = document
                                                             #select_impl
                                                             #attribute_impl
+                                                        ;
+                                                        #transform
+                                                        value
                                                     };
                                                 }
                                             },
                                             None => quote! {
                                                 let #field_name = {
-                                                    document
+                                                    let value = document
                                                         #select_impl
                                                         .ok()
-                                                        .map(|document|document.text().collect::<String>()#trim.to_string())
+                                                        .map(|document| document.text().collect::<String>())
+                                                    ;
+                                                    #transform
+                                                    value
                                                 };
                                             }
                                         }
@@ -198,13 +217,11 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                                     selector: #selector_opt,
                                     attribute: #attribute.to_string(),
                                 })?
-                                #trim
                                 .to_string()
                             },
                             None => quote! {
                                 .text()
                                 .collect::<String>()
-                                #trim
                                 .to_string()
                             },
                         };
@@ -216,10 +233,13 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
 
                         return quote! {
                             let #field_name = {
-                                document
+                                let value = document
                                     #select_impl
                                     #q
                                     #text_or_attr_impl
+                                ;
+                                #transform
+                                value
                             };
                         }
                     }

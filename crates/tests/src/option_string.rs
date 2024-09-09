@@ -17,7 +17,7 @@ fn test_option_string_impl() {
                 document: &de_hypertext::scraper::ElementRef,
             ) -> Result<Self, de_hypertext::DeserializeError> {
                 let field1 = {
-                    document
+                    let value = document
                         .select(
                             &de_hypertext::scraper::Selector::parse("a")
                                 .map_err(|_| {
@@ -35,7 +35,8 @@ fn test_option_string_impl() {
                             selector: "a".to_string(),
                         })
                         .ok()
-                        .map(|document| document.text().collect::<String>().to_string())
+                        .map(|document| document.text().collect::<String>());
+                    value
                 };
                 Ok(Self { field1, })
             }
@@ -59,7 +60,7 @@ fn test_option_string_attribute_impl() {
                 document: &de_hypertext::scraper::ElementRef,
             ) -> Result<Self, de_hypertext::DeserializeError> {
                 let field1 = {
-                    document
+                    let value = document
                         .select(&de_hypertext::scraper::Selector::parse("a").map_err(|_| {
                             de_hypertext::DeserializeError::BuildingSelectorFailed {
                                 struct_name: std::any::type_name::<Self>().to_string(),
@@ -80,7 +81,8 @@ fn test_option_string_attribute_impl() {
                                 .attr("href")
                                 .map(|attribute| attribute.trim().to_string())
                         })
-                        .flatten()
+                        .flatten();
+                    value
                 };
                 Ok(Self { field1 })
             }
@@ -104,10 +106,11 @@ fn test_option_string_no_selector_attribute_impl() {
                 document: &de_hypertext::scraper::ElementRef,
             ) -> Result<Self, de_hypertext::DeserializeError> {
                 let field1 = {
-                    document
+                    let value = document
                         .value()
                         .attr("href")
-                        .map(|attribute| attribute.trim().to_string())
+                        .map(|attribute| attribute.trim().to_string());
+                    value
                 };
                 Ok(Self { field1 })
             }

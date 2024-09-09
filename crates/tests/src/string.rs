@@ -36,7 +36,10 @@ fn test_no_selector_impl() {
             fn from_document(
                 document: &de_hypertext::scraper::ElementRef,
             ) -> Result<Self, de_hypertext::DeserializeError> {
-                let field1 = { document.text().collect::<String>().to_string() };
+                let field1 = {
+                    let value = document.text().collect::<String>().to_string();
+                    value
+                };
                 Ok(Self { field1, })
             }
         }
@@ -89,7 +92,7 @@ fn test_no_selector_but_with_attribute_impl() {
                 document: &de_hypertext::scraper::ElementRef,
             ) -> Result<Self, de_hypertext::DeserializeError> {
                 let field1 = {
-                    document
+                    let value = document
                         .value()
                         .attr("href")
                         .ok_or(de_hypertext::DeserializeError::AttributeNotFound {
@@ -98,7 +101,8 @@ fn test_no_selector_but_with_attribute_impl() {
                             selector: None,
                             attribute: "href".to_string(),
                         })?
-                        .to_string()
+                        .to_string();
+                    value
                 };
                 Ok(Self { field1 })
             }
