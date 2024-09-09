@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v0.1.2 (2024-09-09)
 
+<csr-id-18869b43e2eb4d73b335857c975425079902ecbd/>
+
 ### New Features
 
  - <csr-id-b55468da37bec90a88a710b76562ea3218f8b7d0/> replace trim with transform
@@ -23,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 3 commits contributed to the release.
+ - 4 commits contributed to the release.
  - 5 days passed between releases.
  - 3 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -35,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release de_hypertext_core v0.1.2, de_hypertext v0.1.1 ([`459c79b`](https://github.com/zexa/de_hypertext/commit/459c79b76def84acc26c274b55d066cfd06ff4fb))
     - Replace trim with transform ([`b55468d`](https://github.com/zexa/de_hypertext/commit/b55468da37bec90a88a710b76562ea3218f8b7d0))
     - Remove generic from Deserializer ([`18869b4`](https://github.com/zexa/de_hypertext/commit/18869b43e2eb4d73b335857c975425079902ecbd))
     - Vec<T> implementation using .next() ([`0d1841e`](https://github.com/zexa/de_hypertext/commit/0d1841eba4f4b58ea1580dc7781a8c1e5f362509))
