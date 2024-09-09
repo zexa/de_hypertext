@@ -140,7 +140,7 @@ dependencies = [
 
 [[package]]
 name = "de_hypertext"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "de_hypertext_core 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "de_hypertext_macro 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
