@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v0.1.3 (2024-09-12)
 
+<csr-id-ce5fbdf62da0472e920aad34bd49e6b887cc7d12/>
+
 ### Chore
 
  - <csr-id-ce5fbdf62da0472e920aad34bd49e6b887cc7d12/> bump to 0.1.3
@@ -15,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 1 commit contributed to the release.
+ - 2 commits contributed to the release.
  - 3 days passed between releases.
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -27,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release de_hypertext_core v0.1.3, de_hypertext v0.1.3 ([`f3f21e7`](https://github.com/zexa/de_hypertext/commit/f3f21e79cb0df4deaa88e5dd18153c354ddb8306))
     - Bump to 0.1.3 ([`ce5fbdf`](https://github.com/zexa/de_hypertext/commit/ce5fbdf62da0472e920aad34bd49e6b887cc7d12))
 </details>
 
