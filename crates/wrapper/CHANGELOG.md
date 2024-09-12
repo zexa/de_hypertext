@@ -5,7 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.1.3 (2024-09-12)
+
+### Chore
+
+ - <csr-id-ce5fbdf62da0472e920aad34bd49e6b887cc7d12/> bump to 0.1.3
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 1 commit contributed to the release.
+ - 3 days passed between releases.
+ - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Bump to 0.1.3 ([`ce5fbdf`](https://github.com/zexa/de_hypertext/commit/ce5fbdf62da0472e920aad34bd49e6b887cc7d12))
+</details>
+
 ## v0.1.2 (2024-09-09)
+
+<csr-id-18869b43e2eb4d73b335857c975425079902ecbd/>
 
 ### Refactor
 
@@ -15,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 3 commits contributed to the release.
+ - 4 commits contributed to the release.
  - 5 days passed between releases.
  - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -27,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release de_hypertext v0.1.2 ([`69417e9`](https://github.com/zexa/de_hypertext/commit/69417e9bb7b9009d141c2ba878736a4cab5a154b))
     - Release de_hypertext_core v0.1.2, de_hypertext v0.1.1 ([`7d83c5e`](https://github.com/zexa/de_hypertext/commit/7d83c5e086df84aade1dedba9955841733fef6ea))
     - Release de_hypertext_core v0.1.2, de_hypertext v0.1.1 ([`459c79b`](https://github.com/zexa/de_hypertext/commit/459c79b76def84acc26c274b55d066cfd06ff4fb))
     - Remove generic from Deserializer ([`18869b4`](https://github.com/zexa/de_hypertext/commit/18869b43e2eb4d73b335857c975425079902ecbd))
