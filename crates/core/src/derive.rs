@@ -91,8 +91,17 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                 None => quote! {},
             };
 
-            let (selector_opt, select_impl) = match &selector {
+            let (let_selector_impl, selector_opt, select_impl) = match &selector {
                 Some(selector) => (
+                    quote! {
+                        let selector = &de_hypertext::scraper::Selector::parse(#selector).map_err(|_| {
+                            de_hypertext::DeserializeError::BuildingSelectorFailed {
+                                struct_name: std::any::type_name::<Self>().to_string(),
+                                field: #field_name_lit.to_string(),
+                                selector: #selector.to_string(),
+                            }
+                        })?;
+                    },
                     quote! {
                         Some(#selector.to_string())
                     },
@@ -114,7 +123,7 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                         })
                     },
                 ),
-                None => (quote! {None}, quote! {}),
+                None => (quote!{}, quote! {None}, quote! {}),
             };
 
             match &field.ty {
@@ -191,6 +200,7 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                                     },
                                     _ => quote! {
                                         let #field_name = {
+                                            #let_selector_impl
                                             match document.select(&selector).next() {
                                                 Some(document) => match #inner_type::from_document(&document) {
                                                     Ok(#field_name) => Some(#field_name),
