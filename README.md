@@ -1,6 +1,9 @@
 # de_hypertext
 Framework for parsing html into Rust structures.
 
+> [!CAUTION]
+> The library is currently an experiment for my personal use. It's not at all ready for production.
+
 ## Usage
 ```bash
 cargo add de_hypertext
