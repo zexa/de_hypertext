@@ -1,6 +1,6 @@
 [package]
 name = "de_hypertext_core"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 description = "core of how de_hypertext works"
 license-file = "../../LICENSE"

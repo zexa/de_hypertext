@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.1.4 (2024-09-14)
+
+### Refactor
+
+ - <csr-id-e47c73615465a8efd64bf67cc494c692ee5fabad/> Exhaustively match each meta attribute per field type
+   While this approach ends up as way more code, it is much more legible
+   and reasonable.
+   
+   Other types will still require work for a similar implementation.
+
+### Commit Statistics
+
+<csr-read-only-do-not-edit/>
+
+ - 1 commit contributed to the release.
+ - 1 day passed between releases.
+ - 1 commit was understood as [conventional](https://www.conventionalcommits.org).
+ - 0 issues like '(#ID)' were seen in commit messages
+
+### Commit Details
+
+<csr-read-only-do-not-edit/>
+
+<details><summary>view details</summary>
+
+ * **Uncategorized**
+    - Exhaustively match each meta attribute per field type ([`e47c736`](https://github.com/zexa/de_hypertext/commit/e47c73615465a8efd64bf67cc494c692ee5fabad))
+</details>
+
 ## v0.1.3 (2024-09-12)
 
 <csr-id-ce5fbdf62da0472e920aad34bd49e6b887cc7d12/>
@@ -22,7 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <csr-read-only-do-not-edit/>
 
- - 3 commits contributed to the release.
+ - 4 commits contributed to the release.
  - 3 days passed between releases.
  - 2 commits were understood as [conventional](https://www.conventionalcommits.org).
  - 0 issues like '(#ID)' were seen in commit messages
@@ -34,6 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <details><summary>view details</summary>
 
  * **Uncategorized**
+    - Release de_hypertext_core v0.1.3, de_hypertext v0.1.3 ([`cd782a5`](https://github.com/zexa/de_hypertext/commit/cd782a541154017cf7906dc1b193869ec732fc95))
     - Release de_hypertext_core v0.1.3, de_hypertext v0.1.3 ([`f3f21e7`](https://github.com/zexa/de_hypertext/commit/f3f21e79cb0df4deaa88e5dd18153c354ddb8306))
     - Bump to 0.1.3 ([`ce5fbdf`](https://github.com/zexa/de_hypertext/commit/ce5fbdf62da0472e920aad34bd49e6b887cc7d12))
     - Missing let selector on derive Option<T> ([`a60a53d`](https://github.com/zexa/de_hypertext/commit/a60a53d8a8440fc32af5973f3e9a6872404e0836))
