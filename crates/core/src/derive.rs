@@ -3,6 +3,7 @@ use quote::quote;
 use quote::ToTokens;
 use syn::DeriveInput;
 use syn::ExprClosure;
+use syn::Ident;
 use syn::LitStr;
 use syn::PathSegment;
 
@@ -36,8 +37,8 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
         .fields
         .iter()
         .map(|field| {
-            let field_name = &field.ident;
-            let field_name_lit = field.ident.as_ref().map(|ident| ident.to_string());
+            let field_name = &field.ident.clone().expect("Couldn't get field name");
+            let field_name_lit = field_name.to_string();
             // de_hypertext(selector = "")
             let mut selector: Option<LitStr> = None;
             // de_hypertext(attribute = "")
@@ -82,16 +83,15 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                 })
                 .collect::<Result<Vec<_>, _>>()
                 .unwrap();
-
-            let transform = match transform {
-                Some(transform) => quote! {
-                    let transform = #transform;
-                    let value = transform(value);
-                },
-                None => quote! {},
+            
+            let meta_attributes = MetaAttributes {
+                selector: selector.clone(),
+                attribute: attribute.clone(),
+                transform: transform.clone(),
             };
 
-            let (let_selector_impl, selector_opt, select_impl) = match &selector {
+
+            let (let_selector_impl, select_impl) = match &selector {
                 Some(selector) => (
                     quote! {
                         let selector = &de_hypertext::scraper::Selector::parse(#selector).map_err(|_| {
@@ -101,9 +101,6 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                                 selector: #selector.to_string(),
                             }
                         })?;
-                    },
-                    quote! {
-                        Some(#selector.to_string())
                     },
                     quote! {
                         .select(
@@ -123,7 +120,7 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                         })
                     },
                 ),
-                None => (quote!{}, quote! {None}, quote! {}),
+                None => (quote!{}, quote! {}),
             };
 
             match &field.ty {
@@ -153,51 +150,7 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                         if segment.ident.to_string() == "Option" {
                             if let Some(inner_type) = get_inner_type(segment) {
                                 return match inner_type.to_token_stream().to_string().as_str() {
-                                    "String" => {
-                                        match attribute {
-                                            Some(attribute) => {
-                                                let attribute_impl = match selector.is_some() {
-                                                    true => quote!{
-                                                        .ok()
-                                                        .map(|document|
-                                                            document
-                                                                .value()
-                                                                .attr(#attribute)
-                                                                .map(|attribute| attribute.trim().to_string())
-                                                        )
-                                                        .flatten()
-                                                    },
-                                                    false => quote!{
-                                                        .value()
-                                                        .attr(#attribute)
-                                                        .map(|attribute| attribute.trim().to_string())
-                                                    },
-                                                };
-
-                                                quote! {
-                                                    let #field_name = {
-                                                        let value = document
-                                                            #select_impl
-                                                            #attribute_impl
-                                                        ;
-                                                        #transform
-                                                        value
-                                                    };
-                                                }
-                                            },
-                                            None => quote! {
-                                                let #field_name = {
-                                                    let value = document
-                                                        #select_impl
-                                                        .ok()
-                                                        .map(|document| document.text().collect::<String>())
-                                                    ;
-                                                    #transform
-                                                    value
-                                                };
-                                            }
-                                        }
-                                    },
+                                    "String" => impl_field_option_string(field_name, meta_attributes),
                                     _ => quote! {
                                         let #field_name = {
                                             #let_selector_impl
@@ -216,41 +169,7 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
                     }
 
                     if type_path.path.is_ident("String") {
-                        let text_or_attr_impl = match attribute {
-                            Some(attribute) => quote! {
-                                .value()
-                                .attr(#attribute)
-                                .ok_or(de_hypertext::DeserializeError::AttributeNotFound {
-                                    struct_name: std::any::type_name::<Self>().to_string(),
-                                    field: #field_name_lit.to_string(),
-                                    selector: #selector_opt,
-                                    attribute: #attribute.to_string(),
-                                })?
-                                .to_string()
-                            },
-                            None => quote! {
-                                .text()
-                                .collect::<String>()
-                                .to_string()
-                            },
-                        };
-
-                        let q = match selector.is_some() {
-                            true => quote!{?},
-                            false => quote!{},
-                        };
-
-                        return quote! {
-                            let #field_name = {
-                                let value = document
-                                    #select_impl
-                                    #q
-                                    #text_or_attr_impl
-                                ;
-                                #transform
-                                value
-                            };
-                        }
+                        return impl_field_string(field_name, meta_attributes);
                     }
 
                     quote! {
@@ -274,4 +193,230 @@ pub fn impl_derive_deserialize(input: DeriveInput) -> TokenStream {
             }
         }
     )
+}
+
+// The idea to use a struct here is to specifically get compiler warnings when deconstructing it,
+// forcing us to think about the newly added meta attribute for each type case.
+struct MetaAttributes {
+    pub selector: Option<LitStr>,
+    pub attribute: Option<LitStr>,
+    pub transform: Option<ExprClosure>,
+}
+
+fn impl_selector(field_name: &Ident, selector: &LitStr) -> TokenStream {
+    let field_name = field_name.to_string();
+    quote! {
+        de_hypertext::scraper::Selector::parse(#selector).map_err(|_| {
+            de_hypertext::DeserializeError::BuildingSelectorFailed {
+                struct_name: std::any::type_name::<Self>().to_string(),
+                field: #field_name.to_string(),
+                selector: #selector.to_string(),
+            }
+        })
+    }
+}
+
+fn impl_field_string(field_name: &Ident, meta_attributes: MetaAttributes) -> TokenStream {
+    let MetaAttributes {
+        selector,
+        attribute,
+        transform,
+    } = meta_attributes;
+    let string_impl = match (selector, attribute, transform) {
+        (None, None, None) => quote! {
+            document.text().collect::<String>()
+        },
+        (None, None, Some(transform)) => quote! {
+            (#transform)(document.text().collect::<String>())
+        },
+        (None, Some(attribute), None) => {
+            let field_name = field_name.to_string();
+            quote! {
+                document
+                    .value()
+                    .attr(#attribute)
+                    .map(|s| s.to_string())
+                    .ok_or(de_hypertext::DeserializeError::AttributeNotFound {
+                        struct_name: std::any::type_name::<Self>().to_string(),
+                        field: #field_name.to_string(),
+                        selector: None,
+                        attribute: #attribute.to_string(),
+                    })?
+            }
+        },
+        (None, Some(attribute), Some(transform)) => quote! {
+            (#transform)(
+                document
+                    .value()
+                    .attr(#attribute)
+                    .map(|s| s.to_string())
+                    .ok_or(de_hypertext::DeserializeError::AttributeNotFound {
+                        struct_name: std::any::type_name::<Self>().to_string(),
+                        field: #field_name.to_string(),
+                        selector: None,
+                        attribute: #attribute
+                    })?
+            )
+        },
+        (Some(selector), None, None) => {
+            let selector_impl = impl_selector(&field_name, &selector);
+            let field_name = field_name.to_string();
+            quote! {
+                document
+                    .select(&#selector_impl?)
+                    .next()
+                    .ok_or(de_hypertext::DeserializeError::ElementNotFoud {
+                        struct_name: std::any::type_name::<Self>().to_string(),
+                        field: #field_name.to_string(),
+                        selector: #selector.to_string(),
+                    })?
+                    .text()
+                    .collect::<String>()
+            }
+        },
+        (Some(selector), None, Some(transform)) => {
+            let selector_impl = impl_selector(&field_name, &selector);
+            let field_name = field_name.to_string();
+            quote! {
+                (#transform)(
+                    document
+                        .select(&#selector_impl?)
+                        .next()
+                        .ok_or(de_hypertext::DeserializeError::ElementNotFoud {
+                            struct_name: std::any::type_name::<Self>().to_string(),
+                            field: #field_name.to_string(),
+                            selector: #selector.to_string(),
+                        })?
+                        .text()
+                        .collect::<String>()
+                )
+            }
+        },
+        (Some(selector), Some(attribute), None) => {
+            let selector_impl = impl_selector(&field_name, &selector);
+            let field_name = field_name.to_string();
+            quote! {
+                document
+                    .select(&#selector_impl?)
+                    .next()
+                    .ok_or(de_hypertext::DeserializeError::ElementNotFoud {
+                        struct_name: std::any::type_name::<Self>().to_string(),
+                        field: #field_name.to_string(),
+                        selector: #selector.to_string(),
+                    })?
+                    .value()
+                    .attr(#attribute)
+                    .map(|s| s.to_string())
+                    .ok_or(de_hypertext::DeserializeError::AttributeNotFound {
+                        struct_name: std::any::type_name::<Self>().to_string(),
+                        field: #field_name.to_string(),
+                        selector: Some(#selector.to_string()),
+                        attribute: #attribute.to_string(),
+                    })?
+            }
+        },
+        (Some(selector), Some(attribute), Some(transform)) => {
+            let selector_impl = impl_selector(&field_name, &selector);
+            let field_name = field_name.to_string();
+            quote! {
+                (#transform)(
+                    document
+                        .select(&#selector_impl?)
+                        .next()
+                        .ok_or(de_hypertext::DeserializeError::ElementNotFoud {
+                            struct_name: std::any::type_name::<Self>().to_string(),
+                            field: #field_name.to_string(),
+                            selector: #selector.to_string(),
+                        })?
+                        .value()
+                        .attr(#attribute)
+                        .map(|s| s.to_string())
+                        .ok_or(de_hypertext::DeserializeError::AttributeNotFound {
+                            struct_name: std::any::type_name::<Self>().to_string(),
+                            field: #field_name.to_string(),
+                            selector: Some(#selector.to_string()),
+                            attribute: #attribute.to_string(),
+                        })?
+                )
+            }
+        },
+    };
+
+    quote! {
+        let #field_name = #string_impl;
+    }
+} 
+
+fn impl_field_option_string(field_name: &Ident, meta_attributes: MetaAttributes) -> TokenStream {
+    let MetaAttributes {
+        selector,
+        attribute,
+        transform,
+    } = meta_attributes;
+    let option_string_impl = match (selector, attribute, transform) {
+        (None, None, None) => quote! {
+            Some(document.text().collect::<String>())
+        },
+        (None, None, Some(transform)) => {
+            quote! {
+                Some((#transform)(document.text().collect::<String>()))
+            }
+        }
+        (None, Some(attribute), None) => quote! {
+            document.value().attr(#attribute)
+        },
+        (None, Some(attribute), Some(transform)) => quote! {
+            document
+                .value()
+                .attr(#attribute)
+                .map(|s| s.to_string())
+                .map(#transform);
+        },
+        (Some(selector), None, None) => {
+            let impl_selector = impl_selector(&field_name, &selector);
+            quote! {
+                document
+                    .select(&#impl_selector?)
+                    .next()
+                    .map(|document| document.text().collect::<String>())
+            }
+        }
+        (Some(selector), None, Some(transform)) => {
+            let impl_selector = impl_selector(&field_name, &selector);
+            quote! {
+                document
+                    .select(&#impl_selector?)
+                    .next()
+                    .map(|document| document.text().collect::<String>())
+                    .map(#transform)
+            }
+        }
+        (Some(selector), Some(attribute), None) => {
+            let impl_selector = impl_selector(&field_name, &selector);
+            quote! {
+                document
+                    .select(&#impl_selector?)
+                    .next()
+                    .map(|document| document.value().attr(#attribute))
+                    .flatten()
+                    .map(|s| s.to_string())
+            }
+        }
+        (Some(selector), Some(attribute), Some(transform)) => {
+            let impl_selector = impl_selector(&field_name, &selector);
+            quote! {
+                document
+                    .select(&#impl_selector?)
+                    .next()
+                    .map(|document| document.value().attr(#attribute))
+                    .flatten()
+                    .map(|s| s.to_string())
+                    .map(#transform)
+            }
+        }
+    };
+
+    quote! {
+        let #field_name = #option_string_impl;
+    }
 }
