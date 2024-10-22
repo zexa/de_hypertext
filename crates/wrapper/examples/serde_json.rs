@@ -4,9 +4,9 @@ use std::error::Error;
 #[allow(unused)]
 #[derive(Debug, serde::Serialize, de_hypertext_macro::Deserialize)]
 struct BooksPage {
-    #[de_hypertext(selector = "title", trim)]
+    #[de_hypertext(selector = "title", transform = |x: String| x.trim().to_string())]
     title: String,
-    #[de_hypertext(selector = ".pager > .current", trim)]
+    #[de_hypertext(selector = ".pager > .current", transform = |x: String| x.trim().to_string())]
     pages: String,
     #[de_hypertext(selector = ".row > li")]
     items: Vec<BookItem>,
@@ -20,7 +20,7 @@ struct BookItem {
     name: String,
     #[de_hypertext(selector = ".price_color")]
     price: String,
-    #[de_hypertext(selector = ".star-rating", attribute = "class", trim)]
+    #[de_hypertext(selector = ".star-rating", attribute = "class", transform = |x: String| x.trim().to_string())]
     stars: String,
 }
 

@@ -4,9 +4,9 @@ use std::error::Error;
 #[allow(unused)]
 #[derive(Debug, de_hypertext_macro::Deserialize)]
 struct BooksPage {
-    #[de_hypertext(selector = "title", trim)]
+    #[de_hypertext(selector = "title", transform = |x: String| x.trim().to_string())]
     title: String,
-    #[de_hypertext(selector = ".pager > .current", trim)]
+    #[de_hypertext(selector = ".pager > .current", transform = |x: String| x.trim().to_string())]
     pages: String,
 }
 
